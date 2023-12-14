@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.sql.Date;
+import java.sql.Timestamp;
+
 @Entity
 @Table(name = "users")
 @AllArgsConstructor
@@ -32,9 +33,9 @@ public class UserEntity {
 
     @CreationTimestamp
     @Column(nullable = false)
-    private Date createdAt;
+    private Timestamp createdAt;
 
     @UpdateTimestamp
     @Column(nullable = false)
-    private Date updatedAt;
+    private Timestamp updatedAt;
 }
