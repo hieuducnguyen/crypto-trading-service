@@ -1,7 +1,7 @@
 # Crypto Trading System
 
 ## Description
-This project is a crypto trading system developed using SpringBoot and an in-memory H2 database. It aggregates cryptocurrency prices from various sources and provides APIs for trading, viewing wallet balances, and accessing trading history.
+This project is a crypto trading system developed using SpringBoot and an in-memory H2 database. It aggregates cryptocurrency prices from various sources and provides APIs for retrieving the latest best aggregated price, trading, viewing wallet balances, and accessing trading history.
 
 ## Features
 - Aggregation of cryptocurrency prices from Binance and Huobi every 10 seconds.
@@ -18,12 +18,12 @@ This project is a crypto trading system developed using SpringBoot and an in-mem
 - Any IDE that supports Java (e.g., IntelliJ IDEA, Eclipse)
 
 ### Installing
-1. Clone the repository to your local machine:
+1. Clone the repository to your local machine: `git clone https://github.com/hieuducnguyen/crypto-trading-service.git`
 
-2. Navigate to the project directory and build the project:
+2. Navigate to the project directory and build the project: `mvn clean install`
 
 ### Running the application
-To start the application, run:
+To start the application, run: `mvn spring-boot:run`
 
 ## Usage
 After starting the application, you can access the APIs at `http://localhost:8080/`.
