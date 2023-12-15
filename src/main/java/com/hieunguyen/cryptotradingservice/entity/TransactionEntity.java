@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "transaction")
@@ -47,5 +47,5 @@ public class TransactionEntity {
 
     @CreationTimestamp
     @Column(nullable = false)
-    private Date transactionTime;
+    private Timestamp createdAt;
 }

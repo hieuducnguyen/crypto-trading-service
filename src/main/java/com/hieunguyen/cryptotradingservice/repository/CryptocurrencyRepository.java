@@ -4,4 +4,5 @@ import com.hieunguyen.cryptotradingservice.entity.CryptocurrencyEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CryptocurrencyRepository extends JpaRepository<CryptocurrencyEntity, Long> {
+    CryptocurrencyEntity findBySymbol(String symbol);
 }
