@@ -5,8 +5,10 @@ import com.hieunguyen.cryptotradingservice.entity.UserEntity;
 import com.hieunguyen.cryptotradingservice.entity.WalletEntity;
 import com.hieunguyen.cryptotradingservice.enums.CryptoCurrencyEnum;
 import com.hieunguyen.cryptotradingservice.enums.TradeTypeEnum;
+import com.hieunguyen.cryptotradingservice.model.WalletModel;
 import com.hieunguyen.cryptotradingservice.model.trading.TradingRequest;
 import com.hieunguyen.cryptotradingservice.model.trading.TradingResponse;
+import com.hieunguyen.cryptotradingservice.model.walletbalance.WalletBalanceResponse;
 import com.hieunguyen.cryptotradingservice.repository.MarketDataRepository;
 import com.hieunguyen.cryptotradingservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.hieunguyen.cryptotradingservice.enums.CryptoCurrencyEnum.USDT;
 
@@ -50,8 +54,8 @@ public class UserService {
             if (total <= usdtWallet.getBalance() && askSize <= amount) {
                 usdtWallet.setBalance(usdtWallet.getBalance() - total);
                 tradingWallet.setBalance(tradingWallet.getBalance() + askSize);
-                String description = String.format("Buy %s %s with %s %s", askSize, tradingCurrency.getSymbol(),
-                        total, USDT.getSymbol());
+                String description = String.format("Buy %s %s with %s %s", askSize, tradingCurrency.name(),
+                        total, USDT.name());
                 log.info("user: {}, description: {}", user, description);
                 response.setDescription(description);
                 response.setWalletUSDTModel(usdtWallet.toModel());
@@ -66,8 +70,8 @@ public class UserService {
             if (total <= tradingWallet.getBalance() && bidSize <= amount) {
                 usdtWallet.setBalance(usdtWallet.getBalance() + total);
                 tradingWallet.setBalance(tradingWallet.getBalance() - bidSize);
-                String description = String.format("Sell %s %s with %s %s", bidSize, tradingCurrency.getSymbol(),
-                        total, USDT.getSymbol());
+                String description = String.format("Sell %s %s with %s %s", bidSize, tradingCurrency.name(),
+                        total, USDT.name());
                 log.info("user: {}, description: {}", user, description);
                 response.setDescription(description);
                 response.setWalletUSDTModel(usdtWallet.toModel());
@@ -90,4 +94,15 @@ public class UserService {
                 && request.getUserId() > 0;
     }
 
+    public WalletBalanceResponse getBalance(Long userId) {
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        List<WalletEntity> wallets = user.getWallets();
+        List<WalletModel> walletModels = new ArrayList<>();
+        for (WalletEntity wallet : wallets) {
+            walletModels.add(wallet.toModel());
+        }
+        return WalletBalanceResponse.builder()
+                .wallets(walletModels)
+                .build();
+    }
 }
