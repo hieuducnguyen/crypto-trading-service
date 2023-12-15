@@ -22,6 +22,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,9 +76,10 @@ public class UserService {
                 response.setWalletTradingModel(tradingWallet.toModel());
                 TransactionEntity transaction = TransactionEntity.builder()
                         .cryptocurrency(marketData.getCryptoCurrency())
-                        .pricePerItem(askPrice)
+                        .pricePerItem(askPrice.divide(BigDecimal.valueOf(askQuality), 2, RoundingMode.HALF_UP))
                         .quantity(BigDecimal.valueOf(askQuality))
                         .tradeType(tradeType)
+                        .usdtAmount(BigDecimal.valueOf(usdtWallet.getBalance()))
                         .trader(user)
                         .build();
                 transactionRepository.save(transaction);
@@ -106,9 +108,10 @@ public class UserService {
                 response.setWalletTradingModel(tradingWallet.toModel());
                 TransactionEntity transaction = TransactionEntity.builder()
                         .cryptocurrency(marketData.getCryptoCurrency())
-                        .pricePerItem(bidPrice)
+                        .pricePerItem(bidPrice.divide(BigDecimal.valueOf(bidQuality), 2, RoundingMode.HALF_UP))
                         .quantity(BigDecimal.valueOf(bidQuality))
                         .tradeType(tradeType)
+                        .usdtAmount(BigDecimal.valueOf(usdtWallet.getBalance()))
                         .trader(user)
                         .build();
                 transactionRepository.save(transaction);
@@ -117,7 +120,7 @@ public class UserService {
                     throw new InvalidInputDataException(String.format("Not enough balance to sell %s %s",
                             amount, tradingCurrency.name()));
                 } else {
-                    throw new InvalidInputDataException(String.format("Need to sell upto %s %s", amount, tradingCurrency.name()));
+                    throw new InvalidInputDataException(String.format("Need to sell upto %s %s", bidQuality, tradingCurrency.name()));
                 }
 
             }

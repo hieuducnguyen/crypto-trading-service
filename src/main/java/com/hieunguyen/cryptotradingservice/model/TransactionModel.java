@@ -17,5 +17,6 @@ public class TransactionModel {
     private String cryptocurrency;
     private BigDecimal quantity;
     private BigDecimal pricePerItem;
+    private BigDecimal usdtAmount;
     private String tradeAt;
 }
