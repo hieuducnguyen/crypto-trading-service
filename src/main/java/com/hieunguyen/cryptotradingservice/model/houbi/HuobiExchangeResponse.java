@@ -1,5 +1,6 @@
 package com.hieunguyen.cryptotradingservice.model.houbi;
 
+import com.hieunguyen.cryptotradingservice.model.TradingItemModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,8 +8,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-import static com.hieunguyen.cryptotradingservice.constant.CurrencyConstant.BITCOIN;
-import static com.hieunguyen.cryptotradingservice.constant.CurrencyConstant.ETHEREUM;
+import static com.hieunguyen.cryptotradingservice.enums.CryptoCurrencyEnum.BITCOIN;
+import static com.hieunguyen.cryptotradingservice.enums.CryptoCurrencyEnum.ETHEREUM;
+
 
 @Data
 @AllArgsConstructor
@@ -19,49 +21,61 @@ public class HuobiExchangeResponse {
     private String status;
     private Long ts;
 
-    public Double getBidPriceBitcoin() {
+    public TradingItemModel getBidPriceBitcoin() {
         if (data == null) {
             return null;
         }
         for (HuobiTickerModel ticker : data) {
-            if (ticker.getSymbol().equalsIgnoreCase(BITCOIN)) {
-                return ticker.getBid();
+            if (ticker.getSymbol().equalsIgnoreCase(BITCOIN.getSymbol())) {
+                return TradingItemModel.builder()
+                        .price(ticker.getBid())
+                        .size(ticker.getBidSize())
+                        .build();
             }
         }
         return null;
     }
 
-    public Double getAskPriceBitcoin() {
+    public TradingItemModel getAskPriceBitcoin() {
         if (data == null) {
             return null;
         }
         for (HuobiTickerModel ticker : data) {
-            if (ticker.getSymbol().equalsIgnoreCase(BITCOIN)) {
-                return ticker.getAsk();
+            if (ticker.getSymbol().equalsIgnoreCase(BITCOIN.getSymbol())) {
+                return TradingItemModel.builder()
+                        .price(ticker.getAsk())
+                        .size(ticker.getAskSize())
+                        .build();
             }
         }
         return null;
     }
 
-    public Double getBidPriceEthereum() {
+    public TradingItemModel getBidPriceEthereum() {
         if (data == null) {
             return null;
         }
         for (HuobiTickerModel ticker : data) {
-            if (ticker.getSymbol().equalsIgnoreCase(ETHEREUM)) {
-                return ticker.getBid();
+            if (ticker.getSymbol().equalsIgnoreCase(ETHEREUM.getSymbol())) {
+                return TradingItemModel.builder()
+                        .price(ticker.getBid())
+                        .size(ticker.getBidSize())
+                        .build();
             }
         }
         return null;
     }
 
-    public Double getAskPriceEthereum() {
+    public TradingItemModel getAskPriceEthereum() {
         if (data == null) {
             return null;
         }
         for (HuobiTickerModel ticker : data) {
-            if (ticker.getSymbol().equalsIgnoreCase(ETHEREUM)) {
-                return ticker.getAsk();
+            if (ticker.getSymbol().equalsIgnoreCase(ETHEREUM.getSymbol())) {
+                return TradingItemModel.builder()
+                        .price(ticker.getAsk())
+                        .size(ticker.getAskSize())
+                        .build();
             }
         }
         return null;

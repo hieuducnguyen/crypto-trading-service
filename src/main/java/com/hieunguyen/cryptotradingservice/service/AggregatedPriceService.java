@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.hieunguyen.cryptotradingservice.constant.CurrencyConstant.BITCOIN;
-import static com.hieunguyen.cryptotradingservice.constant.CurrencyConstant.ETHEREUM;
+import static com.hieunguyen.cryptotradingservice.enums.CryptoCurrencyEnum.BITCOIN;
+import static com.hieunguyen.cryptotradingservice.enums.CryptoCurrencyEnum.ETHEREUM;
 
 @Service
 @RequiredArgsConstructor
@@ -19,8 +19,8 @@ public class AggregatedPriceService {
     private final MarketDataRepository marketDataRepository;
 
     public AggregatedPriceResponse getPrice() {
-        MarketDataEntity bitcoinEntity = marketDataRepository.findFirstByCryptoCurrencyOrderByCreatedAtDesc(BITCOIN);
-        MarketDataEntity ethereum = marketDataRepository.findFirstByCryptoCurrencyOrderByCreatedAtDesc(ETHEREUM);
+        MarketDataEntity bitcoinEntity = marketDataRepository.findFirstByCryptoCurrencyOrderByCreatedAtDesc(BITCOIN.getSymbol());
+        MarketDataEntity ethereum = marketDataRepository.findFirstByCryptoCurrencyOrderByCreatedAtDesc(ETHEREUM.getSymbol());
         List<AggregatedPriceModel> aggregatedPriceModelList = List.of(
                 AggregatedPriceModel.builder()
                         .name(bitcoinEntity.getCryptoCurrency().getName())

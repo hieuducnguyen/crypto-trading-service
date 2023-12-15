@@ -2,6 +2,7 @@ package com.hieunguyen.cryptotradingservice.tasklet;
 
 import com.hieunguyen.cryptotradingservice.entity.CryptocurrencyEntity;
 import com.hieunguyen.cryptotradingservice.entity.MarketDataEntity;
+import com.hieunguyen.cryptotradingservice.model.TradingItemModel;
 import com.hieunguyen.cryptotradingservice.model.binance.BinanceExchangeModel;
 import com.hieunguyen.cryptotradingservice.model.binance.BinanceTickerModel;
 import com.hieunguyen.cryptotradingservice.model.houbi.HuobiExchangeResponse;
@@ -23,8 +24,8 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static com.hieunguyen.cryptotradingservice.constant.CurrencyConstant.BITCOIN;
-import static com.hieunguyen.cryptotradingservice.constant.CurrencyConstant.ETHEREUM;
+import static com.hieunguyen.cryptotradingservice.enums.CryptoCurrencyEnum.BITCOIN;
+import static com.hieunguyen.cryptotradingservice.enums.CryptoCurrencyEnum.ETHEREUM;
 
 @Log4j2
 @Component
@@ -57,24 +58,28 @@ public class PriceAggregateScheduleTasklet implements Tasklet {
             assert binancePrice != null;
             assert huobiPrice != null;
 
-            double bestBidBitcoinPrice = Math.max(binancePrice.getBidPriceBitcoin(), huobiPrice.getBidPriceBitcoin());
-            double bestAskBitcoinPrice = Math.min(binancePrice.getAskPriceBitcoin(), huobiPrice.getAskPriceBitcoin());
+            TradingItemModel bestBidBitcoinPrice = binancePrice.getBidPriceBitcoin().getPrice() > huobiPrice.getBidPriceBitcoin().getPrice() ? binancePrice.getBidPriceBitcoin() : huobiPrice.getBidPriceBitcoin();
+            TradingItemModel bestAskBitcoinPrice = binancePrice.getAskPriceBitcoin().getPrice() < huobiPrice.getAskPriceBitcoin().getPrice() ? binancePrice.getAskPriceBitcoin() : huobiPrice.getAskPriceBitcoin();
             //best price of Bitcoin
-            CryptocurrencyEntity bitcoinEntity = cryptocurrencyRepository.findBySymbol(BITCOIN);
+            CryptocurrencyEntity bitcoinEntity = cryptocurrencyRepository.findBySymbol(BITCOIN.getSymbol());
             MarketDataEntity bestPriceBitcoin = MarketDataEntity.builder()
                     .cryptoCurrency(bitcoinEntity)
-                    .bidPrice(BigDecimal.valueOf(bestBidBitcoinPrice))
-                    .askPrice(BigDecimal.valueOf(bestAskBitcoinPrice))
+                    .bidPrice(BigDecimal.valueOf(bestBidBitcoinPrice.getPrice()))
+                    .bidSize(bestBidBitcoinPrice.getSize())
+                    .askPrice(BigDecimal.valueOf(bestAskBitcoinPrice.getPrice()))
+                    .askSize(bestAskBitcoinPrice.getSize())
                     .build();
 
-            double bestBidEthereumPrice = Math.max(binancePrice.getBidPriceEthereum(), huobiPrice.getBidPriceEthereum());
-            double bestAskEthereumPrice = Math.min(binancePrice.getAskPriceEthereum(), huobiPrice.getAskPriceEthereum());
+            TradingItemModel bestBidEthereumPrice = binancePrice.getBidPriceEthereum().getPrice() > huobiPrice.getBidPriceEthereum().getPrice() ? binancePrice.getBidPriceEthereum() : huobiPrice.getBidPriceEthereum();
+            TradingItemModel bestAskEthereumPrice = binancePrice.getAskPriceEthereum().getPrice() < huobiPrice.getAskPriceEthereum().getPrice() ? binancePrice.getAskPriceEthereum() : huobiPrice.getAskPriceEthereum();
             // the best price of Ethereum
-            CryptocurrencyEntity ethereumEntity = cryptocurrencyRepository.findBySymbol(ETHEREUM);
+            CryptocurrencyEntity ethereumEntity = cryptocurrencyRepository.findBySymbol(ETHEREUM.getSymbol());
             MarketDataEntity bestPriceEthereum = MarketDataEntity.builder()
                     .cryptoCurrency(ethereumEntity)
-                    .bidPrice(BigDecimal.valueOf(bestBidEthereumPrice))
-                    .askPrice(BigDecimal.valueOf(bestAskEthereumPrice))
+                    .bidPrice(BigDecimal.valueOf(bestBidEthereumPrice.getPrice()))
+                    .bidSize(bestBidEthereumPrice.getSize())
+                    .askPrice(BigDecimal.valueOf(bestAskEthereumPrice.getPrice()))
+                    .askSize(bestAskEthereumPrice.getSize())
                     .build();
 
             log.info("Best price for Bitcoin: {}", bestPriceBitcoin);

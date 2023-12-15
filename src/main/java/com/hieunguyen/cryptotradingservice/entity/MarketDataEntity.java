@@ -38,7 +38,13 @@ public class MarketDataEntity {
     private BigDecimal bidPrice;
 
     @Column(nullable = false)
+    private Double bidSize;
+
+    @Column(nullable = false)
     private BigDecimal askPrice;
+
+    @Column(nullable = false)
+    private Double askSize;
 
     @CreationTimestamp
     @Column(nullable = false)

@@ -1,5 +1,6 @@
 package com.hieunguyen.cryptotradingservice.model.binance;
 
+import com.hieunguyen.cryptotradingservice.model.TradingItemModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,9 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-import static com.hieunguyen.cryptotradingservice.constant.CurrencyConstant.BITCOIN;
-import static com.hieunguyen.cryptotradingservice.constant.CurrencyConstant.ETHEREUM;
-
+import static com.hieunguyen.cryptotradingservice.enums.CryptoCurrencyEnum.BITCOIN;
+import static com.hieunguyen.cryptotradingservice.enums.CryptoCurrencyEnum.ETHEREUM;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,37 +17,51 @@ import static com.hieunguyen.cryptotradingservice.constant.CurrencyConstant.ETHE
 public class BinanceExchangeModel {
     private List<BinanceTickerModel> tickers;
 
-    public Double getBidPriceBitcoin() {
+    public TradingItemModel getBidPriceBitcoin() {
         for (BinanceTickerModel ticker : tickers) {
-            if (ticker.getSymbol().equalsIgnoreCase(BITCOIN)) {
-                return ticker.getBidPrice();
+            if (ticker.getSymbol().equalsIgnoreCase(BITCOIN.getSymbol())) {
+                return TradingItemModel.builder()
+                        .price(ticker.getBidPrice())
+                        .size(ticker.getBidQty())
+                        .build();
             }
         }
         return null;
     }
 
-    public Double getAskPriceBitcoin(){
+
+
+    public TradingItemModel getAskPriceBitcoin(){
         for (BinanceTickerModel ticker : tickers) {
-            if (ticker.getSymbol().equalsIgnoreCase(BITCOIN)) {
-                return ticker.getAskPrice();
+            if (ticker.getSymbol().equalsIgnoreCase(BITCOIN.getSymbol())) {
+                return TradingItemModel.builder()
+                        .price(ticker.getAskPrice())
+                        .size(ticker.getAskQty())
+                        .build();
             }
         }
         return null;
     }
 
-    public Double getBidPriceEthereum() {
+    public TradingItemModel getBidPriceEthereum() {
         for (BinanceTickerModel ticker : tickers) {
-            if (ticker.getSymbol().equalsIgnoreCase(ETHEREUM)) {
-                return ticker.getBidPrice();
+            if (ticker.getSymbol().equalsIgnoreCase(ETHEREUM.getSymbol())) {
+                return TradingItemModel.builder()
+                        .price(ticker.getBidPrice())
+                        .size(ticker.getBidQty())
+                        .build();
             }
         }
         return null;
     }
 
-    public Double getAskPriceEthereum() {
+    public TradingItemModel getAskPriceEthereum() {
         for (BinanceTickerModel ticker : tickers) {
-            if (ticker.getSymbol().equalsIgnoreCase(ETHEREUM)) {
-                return ticker.getAskPrice();
+            if (ticker.getSymbol().equalsIgnoreCase(ETHEREUM.getSymbol())) {
+                return TradingItemModel.builder()
+                        .price(ticker.getAskPrice())
+                        .size(ticker.getAskQty())
+                        .build();
             }
         }
         return null;
