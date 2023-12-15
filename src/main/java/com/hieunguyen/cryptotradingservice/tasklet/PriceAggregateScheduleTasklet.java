@@ -62,7 +62,7 @@ public class PriceAggregateScheduleTasklet implements Tasklet {
             //best price of Bitcoin
             CryptocurrencyEntity bitcoinEntity = cryptocurrencyRepository.findBySymbol(BITCOIN);
             MarketDataEntity bestPriceBitcoin = MarketDataEntity.builder()
-                    .symbol(bitcoinEntity)
+                    .cryptoCurrency(bitcoinEntity)
                     .bidPrice(BigDecimal.valueOf(bestBidBitcoinPrice))
                     .askPrice(BigDecimal.valueOf(bestAskBitcoinPrice))
                     .build();
@@ -72,7 +72,7 @@ public class PriceAggregateScheduleTasklet implements Tasklet {
             // the best price of Ethereum
             CryptocurrencyEntity ethereumEntity = cryptocurrencyRepository.findBySymbol(ETHEREUM);
             MarketDataEntity bestPriceEthereum = MarketDataEntity.builder()
-                    .symbol(ethereumEntity)
+                    .cryptoCurrency(ethereumEntity)
                     .bidPrice(BigDecimal.valueOf(bestBidEthereumPrice))
                     .askPrice(BigDecimal.valueOf(bestAskEthereumPrice))
                     .build();

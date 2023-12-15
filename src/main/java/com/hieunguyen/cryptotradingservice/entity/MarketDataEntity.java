@@ -32,7 +32,7 @@ public class MarketDataEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "symbol")
-    private CryptocurrencyEntity symbol;
+    private CryptocurrencyEntity cryptoCurrency;
 
     @Column(nullable = false)
     private BigDecimal bidPrice;
