@@ -1,15 +1,19 @@
 package com.hieunguyen.cryptotradingservice.service;
 
 import com.hieunguyen.cryptotradingservice.entity.MarketDataEntity;
+import com.hieunguyen.cryptotradingservice.entity.TransactionEntity;
 import com.hieunguyen.cryptotradingservice.entity.UserEntity;
 import com.hieunguyen.cryptotradingservice.entity.WalletEntity;
 import com.hieunguyen.cryptotradingservice.enums.CryptoCurrencyEnum;
 import com.hieunguyen.cryptotradingservice.enums.TradeTypeEnum;
+import com.hieunguyen.cryptotradingservice.model.TransactionModel;
 import com.hieunguyen.cryptotradingservice.model.WalletModel;
 import com.hieunguyen.cryptotradingservice.model.trading.TradingRequest;
 import com.hieunguyen.cryptotradingservice.model.trading.TradingResponse;
+import com.hieunguyen.cryptotradingservice.model.transactionhistory.TransactionHistoryResponse;
 import com.hieunguyen.cryptotradingservice.model.walletbalance.WalletBalanceResponse;
 import com.hieunguyen.cryptotradingservice.repository.MarketDataRepository;
+import com.hieunguyen.cryptotradingservice.repository.TransactionRepository;
 import com.hieunguyen.cryptotradingservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -28,6 +32,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final MarketDataRepository marketDataRepository;
+    private final TransactionRepository transactionRepository;
 
     public TradingResponse trade(TradingRequest tradingRequest) {
         if (!validateTradeRequest(tradingRequest)) {
@@ -60,6 +65,14 @@ public class UserService {
                 response.setDescription(description);
                 response.setWalletUSDTModel(usdtWallet.toModel());
                 response.setWalletTradingModel(tradingWallet.toModel());
+                TransactionEntity transaction = TransactionEntity.builder()
+                        .cryptocurrency(marketData.getCryptoCurrency())
+                        .pricePerItem(askPrice)
+                        .quantity(BigDecimal.valueOf(askSize))
+                        .tradeType(tradeType)
+                        .trader(user)
+                        .build();
+                transactionRepository.save(transaction);
             } else {
                 throw new RuntimeException("Not enough balance");
             }
@@ -76,6 +89,14 @@ public class UserService {
                 response.setDescription(description);
                 response.setWalletUSDTModel(usdtWallet.toModel());
                 response.setWalletTradingModel(tradingWallet.toModel());
+                TransactionEntity transaction = TransactionEntity.builder()
+                        .cryptocurrency(marketData.getCryptoCurrency())
+                        .pricePerItem(bidPrice)
+                        .quantity(BigDecimal.valueOf(bidSize))
+                        .tradeType(tradeType)
+                        .trader(user)
+                        .build();
+                transactionRepository.save(transaction);
             } else {
                 throw new RuntimeException("Not enough balance");
             }
@@ -103,6 +124,19 @@ public class UserService {
         }
         return WalletBalanceResponse.builder()
                 .wallets(walletModels)
+                .build();
+    }
+
+
+    public TransactionHistoryResponse getTransaction(Long userId) {
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        List<TransactionEntity> transactions = transactionRepository.findByTraderOrderByCreatedAtDesc(user);
+        List<TransactionModel> transactionModels = new ArrayList<>();
+        for (TransactionEntity transaction : transactions) {
+            transactionModels.add(transaction.toModel());
+        }
+        return TransactionHistoryResponse.builder()
+                .transactions(transactionModels)
                 .build();
     }
 }
