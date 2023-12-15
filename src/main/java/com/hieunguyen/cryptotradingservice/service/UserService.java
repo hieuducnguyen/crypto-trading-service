@@ -82,15 +82,20 @@ public class UserService {
                         .build();
                 transactionRepository.save(transaction);
             } else {
-                throw new InvalidInputDataException(String.format("Not enough balance to buy %s %s with price %s USDT",
-                        askQuality, tradingCurrency.name(), total));
+                if (total > usdtWallet.getBalance()) {
+                    throw new InvalidInputDataException(String.format("Not enough balance to buy %s %s with price %s USDT",
+                            askQuality, tradingCurrency.name(), total));
+                } else {
+                    throw new InvalidInputDataException(String.format("Need to buy upto %s %s", askQuality, tradingCurrency.name()));
+                }
+
             }
         } else {
             BigDecimal bidPrice = marketData.getBidPrice();
             Double bidQuality = marketData.getBidQuality();
             double total = bidPrice.multiply(BigDecimal.valueOf(bidQuality)).doubleValue();
             // Check if user has enough balance to sell
-            if (total <= tradingWallet.getBalance() && bidQuality <= amount) {
+            if (amount <= tradingWallet.getBalance() && bidQuality <= amount) {
                 usdtWallet.setBalance(usdtWallet.getBalance() + total);
                 tradingWallet.setBalance(tradingWallet.getBalance() - bidQuality);
                 String description = String.format("Sell %s %s with %s %s", bidQuality, tradingCurrency.name(),
@@ -108,8 +113,13 @@ public class UserService {
                         .build();
                 transactionRepository.save(transaction);
             } else {
-                throw new InvalidInputDataException(String.format("Not enough balance to sell %s %s with price %s USDT",
-                        bidQuality, tradingCurrency.name(), total));
+                if (amount > tradingWallet.getBalance()) {
+                    throw new InvalidInputDataException(String.format("Not enough balance to sell %s %s",
+                            amount, tradingCurrency.name()));
+                } else {
+                    throw new InvalidInputDataException(String.format("Need to sell upto %s %s", amount, tradingCurrency.name()));
+                }
+
             }
         }
         return response;

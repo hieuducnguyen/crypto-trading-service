@@ -19,7 +19,7 @@ CREATE TABLE wallet
 (
     id         INT AUTO_INCREMENT PRIMARY KEY,
     user_id    INT                                 NOT NULL,
-    balance    DECIMAL(15, 6)                      NOT NULL,
+    balance    DECIMAL(30, 6)                      NOT NULL,
     symbol     VARCHAR(100)                        NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
