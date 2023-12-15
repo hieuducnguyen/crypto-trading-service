@@ -6,6 +6,8 @@ import com.hieunguyen.cryptotradingservice.entity.UserEntity;
 import com.hieunguyen.cryptotradingservice.entity.WalletEntity;
 import com.hieunguyen.cryptotradingservice.enums.CryptoCurrencyEnum;
 import com.hieunguyen.cryptotradingservice.enums.TradeTypeEnum;
+import com.hieunguyen.cryptotradingservice.exceptions.InvalidInputDataException;
+import com.hieunguyen.cryptotradingservice.exceptions.NotFoundException;
 import com.hieunguyen.cryptotradingservice.model.TransactionModel;
 import com.hieunguyen.cryptotradingservice.model.WalletModel;
 import com.hieunguyen.cryptotradingservice.model.trading.TradingRequest;
@@ -36,19 +38,21 @@ public class UserService {
 
     public TradingResponse trade(TradingRequest tradingRequest) {
         if (!validateTradeRequest(tradingRequest)) {
-            throw new RuntimeException("Invalid trading request");
+            throw new InvalidInputDataException(String.format("Invalid trading request %s", tradingRequest));
         }
         TradeTypeEnum tradeType = TradeTypeEnum.valueOf(tradingRequest.getTradeType().toUpperCase());
         CryptoCurrencyEnum tradingCurrency = CryptoCurrencyEnum.valueOf(tradingRequest.getCrypto().toUpperCase());
         Double amount = tradingRequest.getAmount();
         Long userId = tradingRequest.getUserId();
 
-        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(String.format("User %s not found", userId)));
 
-        WalletEntity usdtWallet = user.getWallets().stream().filter(w -> w.getCryptocurrencyEntity().getSymbol().equalsIgnoreCase(USDT.getSymbol())).findFirst()
-                .orElseThrow(() -> new RuntimeException("Wallet not found"));
-        WalletEntity tradingWallet = user.getWallets().stream().filter(w -> w.getCryptocurrencyEntity().getSymbol().equalsIgnoreCase(tradingCurrency.getSymbol())).findFirst()
-                .orElseThrow(() -> new RuntimeException("Wallet not found"));
+        WalletEntity usdtWallet = user.getWallets().stream().filter(w -> w.getCryptocurrencyEntity().getSymbol()
+                        .equalsIgnoreCase(USDT.getSymbol())).findFirst()
+                .orElseThrow(() -> new InvalidInputDataException(String.format("Wallet not found %s", USDT.getSymbol())));
+        WalletEntity tradingWallet = user.getWallets().stream().filter(w -> w.getCryptocurrencyEntity().getSymbol()
+                        .equalsIgnoreCase(tradingCurrency.getSymbol())).findFirst()
+                .orElseThrow(() -> new InvalidInputDataException(String.format("Wallet not found %s", tradingCurrency.getSymbol())));
         MarketDataEntity marketData = marketDataRepository.findFirstByCryptoCurrencyOrderByCreatedAtDesc(tradingCurrency.getSymbol());
 
         TradingResponse response = new TradingResponse();
@@ -74,7 +78,8 @@ public class UserService {
                         .build();
                 transactionRepository.save(transaction);
             } else {
-                throw new RuntimeException("Not enough balance");
+                throw new InvalidInputDataException(String.format("Not enough balance to buy %s %s with price %s USDT",
+                        askSize, tradingCurrency.name(), total));
             }
         } else {
             BigDecimal bidPrice = marketData.getBidPrice();
@@ -98,7 +103,8 @@ public class UserService {
                         .build();
                 transactionRepository.save(transaction);
             } else {
-                throw new RuntimeException("Not enough balance");
+                throw new InvalidInputDataException(String.format("Not enough balance to sell %s %s with price %s USDT",
+                        bidSize, tradingCurrency.name(), total));
             }
         }
         return response;
@@ -116,7 +122,7 @@ public class UserService {
     }
 
     public WalletBalanceResponse getBalance(Long userId) {
-        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(String.format("User %s not found", userId)));
         List<WalletEntity> wallets = user.getWallets();
         List<WalletModel> walletModels = new ArrayList<>();
         for (WalletEntity wallet : wallets) {
@@ -129,7 +135,7 @@ public class UserService {
 
 
     public TransactionHistoryResponse getTransaction(Long userId) {
-        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(String.format("User %s not found", userId)));
         List<TransactionEntity> transactions = transactionRepository.findByTraderOrderByCreatedAtDesc(user);
         List<TransactionModel> transactionModels = new ArrayList<>();
         for (TransactionEntity transaction : transactions) {
