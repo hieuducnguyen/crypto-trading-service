@@ -34,7 +34,7 @@ public class WalletEntity {
     @JoinColumn(name = "symbol")
     private CryptocurrencyEntity cryptocurrencyEntity;
 
-    @Column(nullable = false)
+    @Column(name = "balance", nullable = false)
     private Double balance;
 
     public WalletModel toModel() {

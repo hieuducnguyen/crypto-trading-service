@@ -32,7 +32,7 @@ public class TransactionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long transactionId;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trader", nullable = false)
@@ -42,12 +42,11 @@ public class TransactionEntity {
     @Enumerated(EnumType.STRING)
     private TradeTypeEnum tradeType;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currency_id", nullable = false)
     private CryptocurrencyEntity cryptocurrency;
 
-    @Column(nullable = false)
+    @Column(name = "quantity", nullable = false)
     private BigDecimal quantity;
 
     @Column(name = "price_per_item", nullable = false)

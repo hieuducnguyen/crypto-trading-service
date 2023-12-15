@@ -1,4 +1,4 @@
-package com.hieunguyen.cryptotradingservice.config;
+package com.hieunguyen.cryptotradingservice.batch;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @EnableScheduling
 @RequiredArgsConstructor
 @EnableSchedulerLock(defaultLockAtMostFor = "PT10S", defaultLockAtLeastFor = "PT10S", interceptMode = EnableSchedulerLock.InterceptMode.PROXY_METHOD)
-public class BatchSchedulerConfig {
+public class BatchScheduler {
     private final JobLauncher jobLauncher;
     private final Job aggregatePricesJob;
     private static final String AGGREGATE_PRICE_SCHEDULER = "AggregatePriceScheduler";

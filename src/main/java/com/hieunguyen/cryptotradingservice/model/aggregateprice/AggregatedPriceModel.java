@@ -1,4 +1,4 @@
-package com.hieunguyen.cryptotradingservice.model;
+package com.hieunguyen.cryptotradingservice.model.aggregateprice;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

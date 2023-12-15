@@ -1,6 +1,6 @@
 package com.hieunguyen.cryptotradingservice.controller;
 
-import com.hieunguyen.cryptotradingservice.model.AggregatedPriceResponse;
+import com.hieunguyen.cryptotradingservice.model.aggregateprice.AggregatedPriceResponse;
 import com.hieunguyen.cryptotradingservice.service.AggregatedPriceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

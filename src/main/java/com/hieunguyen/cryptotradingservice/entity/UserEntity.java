@@ -29,11 +29,11 @@ public class UserEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
-    private String passwordHash;
+    @Column(name = "password", nullable = false)
+    private String password;
 
     @OneToMany(mappedBy = "user")
     @Column(nullable = false)
