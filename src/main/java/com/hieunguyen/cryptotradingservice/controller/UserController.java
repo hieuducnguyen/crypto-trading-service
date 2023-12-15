@@ -2,6 +2,7 @@ package com.hieunguyen.cryptotradingservice.controller;
 
 import com.hieunguyen.cryptotradingservice.model.trading.TradingRequest;
 import com.hieunguyen.cryptotradingservice.model.trading.TradingResponse;
+import com.hieunguyen.cryptotradingservice.model.transactionhistory.TransactionHistoryResponse;
 import com.hieunguyen.cryptotradingservice.model.walletbalance.WalletBalanceResponse;
 import com.hieunguyen.cryptotradingservice.service.UserService;
 import jakarta.transaction.Transactional;
@@ -33,5 +34,11 @@ public class UserController {
     public WalletBalanceResponse getBalance(@PathVariable("userId") Long userId) {
         log.info("getBalance {}", userId);
         return userService.getBalance(userId);
+    }
+
+    @GetMapping("/transaction/{userId}")
+    public TransactionHistoryResponse getTransaction(@PathVariable("userId") Long userId) {
+        log.info("getTransaction {}", userId);
+        return userService.getTransaction(userId);
     }
 }
