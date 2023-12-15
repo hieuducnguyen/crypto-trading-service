@@ -22,6 +22,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,22 +76,28 @@ public class UserService {
                 response.setWalletTradingModel(tradingWallet.toModel());
                 TransactionEntity transaction = TransactionEntity.builder()
                         .cryptocurrency(marketData.getCryptoCurrency())
-                        .pricePerItem(askPrice)
+                        .pricePerItem(askPrice.divide(BigDecimal.valueOf(askQuality), 2, RoundingMode.HALF_UP))
                         .quantity(BigDecimal.valueOf(askQuality))
                         .tradeType(tradeType)
+                        .usdtAmount(BigDecimal.valueOf(usdtWallet.getBalance()))
                         .trader(user)
                         .build();
                 transactionRepository.save(transaction);
             } else {
-                throw new InvalidInputDataException(String.format("Not enough balance to buy %s %s with price %s USDT",
-                        askQuality, tradingCurrency.name(), total));
+                if (total > usdtWallet.getBalance()) {
+                    throw new InvalidInputDataException(String.format("Not enough balance to buy %s %s with price %s USDT",
+                            askQuality, tradingCurrency.name(), total));
+                } else {
+                    throw new InvalidInputDataException(String.format("Need to buy upto %s %s", askQuality, tradingCurrency.name()));
+                }
+
             }
         } else {
             BigDecimal bidPrice = marketData.getBidPrice();
             Double bidQuality = marketData.getBidQuality();
             double total = bidPrice.multiply(BigDecimal.valueOf(bidQuality)).doubleValue();
             // Check if user has enough balance to sell
-            if (total <= tradingWallet.getBalance() && bidQuality <= amount) {
+            if (amount <= tradingWallet.getBalance() && bidQuality <= amount) {
                 usdtWallet.setBalance(usdtWallet.getBalance() + total);
                 tradingWallet.setBalance(tradingWallet.getBalance() - bidQuality);
                 String description = String.format("Sell %s %s with %s %s", bidQuality, tradingCurrency.name(),
@@ -101,15 +108,21 @@ public class UserService {
                 response.setWalletTradingModel(tradingWallet.toModel());
                 TransactionEntity transaction = TransactionEntity.builder()
                         .cryptocurrency(marketData.getCryptoCurrency())
-                        .pricePerItem(bidPrice)
+                        .pricePerItem(bidPrice.divide(BigDecimal.valueOf(bidQuality), 2, RoundingMode.HALF_UP))
                         .quantity(BigDecimal.valueOf(bidQuality))
                         .tradeType(tradeType)
+                        .usdtAmount(BigDecimal.valueOf(usdtWallet.getBalance()))
                         .trader(user)
                         .build();
                 transactionRepository.save(transaction);
             } else {
-                throw new InvalidInputDataException(String.format("Not enough balance to sell %s %s with price %s USDT",
-                        bidQuality, tradingCurrency.name(), total));
+                if (amount > tradingWallet.getBalance()) {
+                    throw new InvalidInputDataException(String.format("Not enough balance to sell %s %s",
+                            amount, tradingCurrency.name()));
+                } else {
+                    throw new InvalidInputDataException(String.format("Need to sell upto %s %s", bidQuality, tradingCurrency.name()));
+                }
+
             }
         }
         return response;

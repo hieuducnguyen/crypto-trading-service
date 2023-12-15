@@ -52,6 +52,9 @@ public class TransactionEntity {
     @Column(name = "price_per_item", nullable = false)
     private BigDecimal pricePerItem;
 
+    @Column(name = "usdt_amount", nullable = false)
+    private BigDecimal usdtAmount;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
@@ -62,6 +65,7 @@ public class TransactionEntity {
                 .cryptocurrency(cryptocurrency.getName())
                 .quantity(quantity)
                 .pricePerItem(pricePerItem)
+                .usdtAmount(usdtAmount)
                 .tradeAt(DATE_FORMAT.format(createdAt))
                 .build();
     }

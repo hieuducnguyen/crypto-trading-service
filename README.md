@@ -54,5 +54,9 @@ After starting the application, you can access the APIs at `http://localhost:808
 ## Contributing
 Contributions to this project are welcome. Please ensure to update tests as appropriate.
 
+## Future Improvements
+- Add more unit tests and integration tests.
+- Remove market data from the database after a certain period of time (For example 1 year).
+
 ## License
 Hieu Nguyen Duc
