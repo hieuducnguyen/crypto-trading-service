@@ -28,11 +28,28 @@ To start the application, run:
 ## Usage
 After starting the application, you can access the APIs at `http://localhost:8080/`.
 
-### Available Endpoints
-- `GET /api/latest-best-prices` - Retrieve the latest aggregated price.
-- `POST /api/latest-best-trade` - Execute a trade.
-- `GET /api/wallet` - View wallet balance.
-- `GET /api/history` - Access trading history.
+## API Endpoints Documentation
+
+### User-Related Endpoints
+
+1. Execute a Trade
+- **Endpoint**: `POST /api/user/trading`
+- **Description**: Allows users to execute a trade. The trade details should be sent in the request body.
+
+2. View Wallet Balance
+- **Endpoint**: `GET /api/user/balance/{userId}`
+- **Description**: Retrieve the wallet balance for a specific user. Replace `{userId}` in the URL path with the user's ID.
+
+3. Access Trading History
+- **Endpoint**: `GET /api/user/transaction/{userId}`
+- **Description**: Get the transaction history for a specific user. Replace `{userId}` in the URL path with the user's ID.
+
+### Price Aggregation-Related Endpoint
+
+4. Retrieve the Latest Aggregated Price
+- **Endpoint**: `GET /api/aggregated-price`
+- **Description**: Provides the latest aggregated price information.
+
 
 ## Contributing
 Contributions to this project are welcome. Please ensure to update tests as appropriate.

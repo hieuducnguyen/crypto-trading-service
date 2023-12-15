@@ -1,8 +1,8 @@
 package com.hieunguyen.cryptotradingservice.service;
 
 import com.hieunguyen.cryptotradingservice.entity.MarketDataEntity;
-import com.hieunguyen.cryptotradingservice.model.AggregatedPriceModel;
-import com.hieunguyen.cryptotradingservice.model.AggregatedPriceResponse;
+import com.hieunguyen.cryptotradingservice.model.aggregateprice.AggregatedPriceModel;
+import com.hieunguyen.cryptotradingservice.model.aggregateprice.AggregatedPriceResponse;
 import com.hieunguyen.cryptotradingservice.repository.MarketDataRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

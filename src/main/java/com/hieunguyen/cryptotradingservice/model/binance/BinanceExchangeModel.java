@@ -22,7 +22,7 @@ public class BinanceExchangeModel {
             if (ticker.getSymbol().equalsIgnoreCase(BITCOIN.getSymbol())) {
                 return TradingItemModel.builder()
                         .price(ticker.getBidPrice())
-                        .size(ticker.getBidQty())
+                        .quality(ticker.getBidQty())
                         .build();
             }
         }
@@ -36,7 +36,7 @@ public class BinanceExchangeModel {
             if (ticker.getSymbol().equalsIgnoreCase(BITCOIN.getSymbol())) {
                 return TradingItemModel.builder()
                         .price(ticker.getAskPrice())
-                        .size(ticker.getAskQty())
+                        .quality(ticker.getAskQty())
                         .build();
             }
         }
@@ -48,7 +48,7 @@ public class BinanceExchangeModel {
             if (ticker.getSymbol().equalsIgnoreCase(ETHEREUM.getSymbol())) {
                 return TradingItemModel.builder()
                         .price(ticker.getBidPrice())
-                        .size(ticker.getBidQty())
+                        .quality(ticker.getBidQty())
                         .build();
             }
         }
@@ -60,7 +60,7 @@ public class BinanceExchangeModel {
             if (ticker.getSymbol().equalsIgnoreCase(ETHEREUM.getSymbol())) {
                 return TradingItemModel.builder()
                         .price(ticker.getAskPrice())
-                        .size(ticker.getAskQty())
+                        .quality(ticker.getAskQty())
                         .build();
             }
         }

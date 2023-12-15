@@ -4,7 +4,7 @@ VALUES ('BTCUSDT', 'Bitcoin'),
        ('USDT', 'USDT');
 
 
-INSERT INTO users (email, password_hash)
+INSERT INTO users (email, password)
 VALUES ('stephan@gmail.com', 'passwordHash1'),
     ('tom@gmail.com', 'passwordHash2');
 

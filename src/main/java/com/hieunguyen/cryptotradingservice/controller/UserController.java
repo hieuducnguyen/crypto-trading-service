@@ -26,19 +26,19 @@ public class UserController {
     @PostMapping("/trading")
     @Transactional
     public TradingResponse trade(@RequestBody TradingRequest tradingRequest) {
-        log.info("trade tradingRequest: {}", tradingRequest);
+        log.info("Trade TradingRequest: {}", tradingRequest);
         return userService.trade(tradingRequest);
     }
 
     @GetMapping("/balance/{userId}")
     public WalletBalanceResponse getBalance(@PathVariable("userId") Long userId) {
-        log.info("getBalance {}", userId);
+        log.info("Get Balance UserId {}", userId);
         return userService.getBalance(userId);
     }
 
     @GetMapping("/transaction/{userId}")
     public TransactionHistoryResponse getTransaction(@PathVariable("userId") Long userId) {
-        log.info("getTransaction {}", userId);
+        log.info("Get Transaction UserId {}", userId);
         return userService.getTransaction(userId);
     }
 }

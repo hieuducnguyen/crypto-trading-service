@@ -28,25 +28,25 @@ import java.sql.Timestamp;
 public class MarketDataEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long dataId;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "symbol")
     private CryptocurrencyEntity cryptoCurrency;
 
-    @Column(nullable = false)
+    @Column(name = "bid_price", nullable = false)
     private BigDecimal bidPrice;
 
-    @Column(nullable = false)
-    private Double bidSize;
+    @Column(name = "bid_quality", nullable = false)
+    private Double bidQuality;
 
-    @Column(nullable = false)
+    @Column(name = "ask_price", nullable = false)
     private BigDecimal askPrice;
 
-    @Column(nullable = false)
-    private Double askSize;
+    @Column(name = "ask_quality", nullable = false)
+    private Double askQuality;
 
     @CreationTimestamp
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
 }

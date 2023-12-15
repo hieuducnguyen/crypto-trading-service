@@ -40,13 +40,15 @@ public class UserService {
         if (!validateTradeRequest(tradingRequest)) {
             throw new InvalidInputDataException(String.format("Invalid trading request %s", tradingRequest));
         }
+
+        // Get trading request data
         TradeTypeEnum tradeType = TradeTypeEnum.valueOf(tradingRequest.getTradeType().toUpperCase());
         CryptoCurrencyEnum tradingCurrency = CryptoCurrencyEnum.valueOf(tradingRequest.getCrypto().toUpperCase());
         Double amount = tradingRequest.getAmount();
         Long userId = tradingRequest.getUserId();
 
+        // Get user data
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(String.format("User %s not found", userId)));
-
         WalletEntity usdtWallet = user.getWallets().stream().filter(w -> w.getCryptocurrencyEntity().getSymbol()
                         .equalsIgnoreCase(USDT.getSymbol())).findFirst()
                 .orElseThrow(() -> new InvalidInputDataException(String.format("Wallet not found %s", USDT.getSymbol())));
@@ -55,15 +57,17 @@ public class UserService {
                 .orElseThrow(() -> new InvalidInputDataException(String.format("Wallet not found %s", tradingCurrency.getSymbol())));
         MarketDataEntity marketData = marketDataRepository.findFirstByCryptoCurrencyOrderByCreatedAtDesc(tradingCurrency.getSymbol());
 
+        // Trade logic
         TradingResponse response = new TradingResponse();
         if (tradeType.equals(TradeTypeEnum.BUY)) {
             BigDecimal askPrice = marketData.getAskPrice();
-            Double askSize = marketData.getAskSize();
-            Double total = askPrice.multiply(BigDecimal.valueOf(askSize)).doubleValue();
-            if (total <= usdtWallet.getBalance() && askSize <= amount) {
+            Double askQuality = marketData.getAskQuality();
+            Double total = askPrice.multiply(BigDecimal.valueOf(askQuality)).doubleValue();
+            // Check if user has enough balance to buy
+            if (total <= usdtWallet.getBalance() && askQuality <= amount) {
                 usdtWallet.setBalance(usdtWallet.getBalance() - total);
-                tradingWallet.setBalance(tradingWallet.getBalance() + askSize);
-                String description = String.format("Buy %s %s with %s %s", askSize, tradingCurrency.name(),
+                tradingWallet.setBalance(tradingWallet.getBalance() + askQuality);
+                String description = String.format("Buy %s %s with %s %s", askQuality, tradingCurrency.name(),
                         total, USDT.name());
                 log.info("user: {}, description: {}", user, description);
                 response.setDescription(description);
@@ -72,23 +76,24 @@ public class UserService {
                 TransactionEntity transaction = TransactionEntity.builder()
                         .cryptocurrency(marketData.getCryptoCurrency())
                         .pricePerItem(askPrice)
-                        .quantity(BigDecimal.valueOf(askSize))
+                        .quantity(BigDecimal.valueOf(askQuality))
                         .tradeType(tradeType)
                         .trader(user)
                         .build();
                 transactionRepository.save(transaction);
             } else {
                 throw new InvalidInputDataException(String.format("Not enough balance to buy %s %s with price %s USDT",
-                        askSize, tradingCurrency.name(), total));
+                        askQuality, tradingCurrency.name(), total));
             }
         } else {
             BigDecimal bidPrice = marketData.getBidPrice();
-            Double bidSize = marketData.getBidSize();
-            double total = bidPrice.multiply(BigDecimal.valueOf(bidSize)).doubleValue();
-            if (total <= tradingWallet.getBalance() && bidSize <= amount) {
+            Double bidQuality = marketData.getBidQuality();
+            double total = bidPrice.multiply(BigDecimal.valueOf(bidQuality)).doubleValue();
+            // Check if user has enough balance to sell
+            if (total <= tradingWallet.getBalance() && bidQuality <= amount) {
                 usdtWallet.setBalance(usdtWallet.getBalance() + total);
-                tradingWallet.setBalance(tradingWallet.getBalance() - bidSize);
-                String description = String.format("Sell %s %s with %s %s", bidSize, tradingCurrency.name(),
+                tradingWallet.setBalance(tradingWallet.getBalance() - bidQuality);
+                String description = String.format("Sell %s %s with %s %s", bidQuality, tradingCurrency.name(),
                         total, USDT.name());
                 log.info("user: {}, description: {}", user, description);
                 response.setDescription(description);
@@ -97,14 +102,14 @@ public class UserService {
                 TransactionEntity transaction = TransactionEntity.builder()
                         .cryptocurrency(marketData.getCryptoCurrency())
                         .pricePerItem(bidPrice)
-                        .quantity(BigDecimal.valueOf(bidSize))
+                        .quantity(BigDecimal.valueOf(bidQuality))
                         .tradeType(tradeType)
                         .trader(user)
                         .build();
                 transactionRepository.save(transaction);
             } else {
                 throw new InvalidInputDataException(String.format("Not enough balance to sell %s %s with price %s USDT",
-                        bidSize, tradingCurrency.name(), total));
+                        bidQuality, tradingCurrency.name(), total));
             }
         }
         return response;

@@ -29,7 +29,7 @@ public class HuobiExchangeResponse {
             if (ticker.getSymbol().equalsIgnoreCase(BITCOIN.getSymbol())) {
                 return TradingItemModel.builder()
                         .price(ticker.getBid())
-                        .size(ticker.getBidSize())
+                        .quality(ticker.getBidSize())
                         .build();
             }
         }
@@ -44,7 +44,7 @@ public class HuobiExchangeResponse {
             if (ticker.getSymbol().equalsIgnoreCase(BITCOIN.getSymbol())) {
                 return TradingItemModel.builder()
                         .price(ticker.getAsk())
-                        .size(ticker.getAskSize())
+                        .quality(ticker.getAskSize())
                         .build();
             }
         }
@@ -59,7 +59,7 @@ public class HuobiExchangeResponse {
             if (ticker.getSymbol().equalsIgnoreCase(ETHEREUM.getSymbol())) {
                 return TradingItemModel.builder()
                         .price(ticker.getBid())
-                        .size(ticker.getBidSize())
+                        .quality(ticker.getBidSize())
                         .build();
             }
         }
@@ -74,7 +74,7 @@ public class HuobiExchangeResponse {
             if (ticker.getSymbol().equalsIgnoreCase(ETHEREUM.getSymbol())) {
                 return TradingItemModel.builder()
                         .price(ticker.getAsk())
-                        .size(ticker.getAskSize())
+                        .quality(ticker.getAskSize())
                         .build();
             }
         }

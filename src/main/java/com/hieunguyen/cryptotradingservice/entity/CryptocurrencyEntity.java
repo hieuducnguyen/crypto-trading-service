@@ -19,15 +19,14 @@ import java.sql.Timestamp;
 @Builder
 @Data
 public class CryptocurrencyEntity {
-
     @Id
-    @Column(unique = true, nullable = false)
+    @Column(name = "symbol", unique = true, nullable = false)
     private String symbol;
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @CreationTimestamp
-    @Column(nullable = false)
+    @Column(name = "create_at", nullable = false)
     private Timestamp createAt;
 }
