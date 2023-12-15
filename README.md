@@ -59,4 +59,4 @@ Contributions to this project are welcome. Please ensure to update tests as appr
 - Remove market data from the database after a certain period of time (For example 1 year).
 
 ## License
-Hieu Nguyen Duc
+Hieu Nguyen Duc 
